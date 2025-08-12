@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Gaya Bekerja Otakmu!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="card p-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Cek Gaya Bekerja Otakmu!</h1>
+            <p class="text-gray-600 mb-6">Ayo cari tahu cara kerja otakmu yang paling kuat. Ini akan membantumu menemukan pekerjaan dan kegiatan yang paling cocok untukmu. Jawab cepat dan jujur ya!</p>
+            <button onclick="startQuiz()" class="btn bg-purple-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-purple-700">
+                Mulai Tes
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="card p-8 hidden">
+            <div id="progress-bar-container" class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div id="progress-bar" class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-800 mb-6 text-center"></h2>
+            <div id="answers-container" class="grid grid-cols-1 gap-4">
+                <!-- Answers will be injected here by JS -->
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="card p-8 hidden">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-4">Gaya Bekerja Otak Dominanmu:</h2>
+            <div id="result-content" class="space-y-6">
+                <!-- Result content will be injected here by JS -->
+            </div>
+            <div class="text-center mt-8">
+                <button onclick="restartQuiz()" class="btn bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700">
+                    Ulangi Tes
+                </button>
+            </div>
+             <p class="text-xs text-gray-500 text-center mt-4">Model ini adalah penyederhanaan untuk membantu refleksi. Untuk analisis yang lebih mendalam, disarankan untuk menemui praktisi profesional.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA (Model terinspirasi STIFIn) ---
+        const questions = [
+            { question: "Saat membuat keputusan penting, kamu lebih percaya pada...", answers: [
+                { text: "Data, fakta, dan logika yang jelas.", type: "logis" },
+                { text: "Perasaan dan dampaknya pada orang lain.", type: "perasa" }
+            ]},
+            { question: "Melihat sebuah peluang, kamu cenderung...", answers: [
+                { text: "Memikirkan ide-ide besar dan kemungkinan di masa depan.", type: "kreatif" },
+                { text: "Fokus pada langkah-langkah nyata yang bisa dikerjakan sekarang.", type: "praktis" }
+            ]},
+            { question: "Dalam situasi darurat yang butuh respons cepat, kamu...", answers: [
+                { text: "Bertindak berdasarkan insting tanpa banyak mikir.", type: "serbabisa" },
+                { text: "Berhenti sejenak untuk menganalisa situasi dengan kepala dingin.", type: "logis" }
+            ]},
+            { question: "Kamu lebih bersemangat membahas...", answers: [
+                { text: "Konsep, ide, dan cerita imajinatif.", type: "kreatif" },
+                { text: "Hubungan antar manusia dan keharmonisan tim.", type: "perasa" }
+            ]},
+            { question: "Cara belajarmu yang paling efektif adalah...", answers: [
+                { text: "Mengingat dan meniru contoh yang sudah ada.", type: "praktis" },
+                { text: "Memahami konsepnya dulu, baru mencari cara sendiri.", type: "kreatif" }
+            ]},
+            { question: "Jika ada konflik di dalam tim, kamu akan...", answers: [
+                { text: "Mencari solusi yang adil berdasarkan aturan.", type: "logis" },
+                { text: "Menjadi penengah dan menjaga perasaan semua orang.", type: "perasa" }
+            ]},
+             { question: "Kamu lebih suka pekerjaan yang...", answers: [
+                { text: "Punya target dan langkah-langkah yang jelas dan terukur.", type: "praktis" },
+                { text: "Memberi kebebasan untuk berkreasi dan mencoba hal baru.", type: "kreatif" }
+            ]},
+            { question: "Saat menolong orang, kamu cenderung...", answers: [
+                { text: "Spontan membantu apa saja yang bisa dikerjakan saat itu juga.", type: "serbabisa" },
+                { text: "Memberi dukungan moril dan mendengarkan curhat mereka.", type: "perasa" }
+            ]},
+            { question: "Bagimu, yang paling penting dalam bekerja adalah...", answers: [
+                { text: "Efisiensi dan hasil yang logis.", type: "logis" },
+                { text: "Proses yang terbukti berhasil dan bisa diandalkan.", type: "praktis" }
+            ]},
+            { question: "Kamu merasa paling hebat saat...", answers: [
+                { text: "Menemukan ide 'gila' yang tidak terpikirkan orang lain.", type: "kreatif" },
+                { text: "Menjadi andalan yang siap membantu kapan saja dibutuhkan.", type: "serbabisa" }
+            ]}
+        ];
+
+        const profiles = {
+            praktis: {
+                title: "Si Praktis (Tipe Pelaksana)",
+                description: "Otakmu jago mengingat dan melakukan hal-hal yang nyata dan konkret. Kamu adalah tipe pekerja keras, rajin, dan bisa diandalkan. Kamu percaya pada bukti dan pengalaman, bukan sekadar teori.",
+                careers: ["Admin/Staf Eksekutor", "Tentara/Polisi", "Pengrajin", "Atlet", "Auditor", "Koki"],
+                entrepreneur: ["Bisnis waralaba (franchise)", "Toko kelontong/ritel", "Usaha katering", "Bengkel"],
+                sharpen: ["Manajemen waktu", "Ketelitian dan kerapian", "Menguasai satu bidang sampai jadi ahli"],
+                avoid: ["Terlalu fokus pada detail kecil sampai lupa gambaran besar", "Sulit beradaptasi dengan perubahan mendadak", "Kurang suka hal-hal yang abstrak atau imajinatif"]
+            },
+            logis: {
+                title: "Si Logis (Tipe Analis)",
+                description: "Otakmu bekerja secara sistematis dan objektif. Kamu jago menganalisis, mencari sebab-akibat, dan membuat semuanya terstruktur. Bagimu, aturan dan logika adalah raja.",
+                careers: ["Programmer", "Analis Sistem", "Ahli Hukum/Pengacara", "Insinyur", "Manajer Proyek"],
+                entrepreneur: ["Konsultan IT", "Membangun sistem/aplikasi", "Jasa riset dan analisis pasar"],
+                sharpen: ["Berpikir kritis", "Problem solving (memecahkan masalah)", "Manajemen sistem yang kompleks"],
+                avoid: ["Terkesan kaku dan dingin", "Kurang peka terhadap perasaan orang lain", "Terlalu berpegang pada aturan hingga tidak fleksibel"]
+            },
+            kreatif: {
+                title: "Si Kreatif (Tipe Visioner)",
+                description: "Otakmu jago melihat gambaran besar dan menciptakan ide-ide baru. Kamu berpikir jauh ke depan dan suka hal-hal yang bersifat konseptual dan imajinatif. Kamu adalah sumber inspirasi.",
+                careers: ["Pengusaha/Pebisnis", "Desainer", "Penulis/Sutradara", "Ahli Marketing & Branding", "Arsitek"],
+                entrepreneur: ["Mendirikan startup dari ide orisinal", "Agensi periklanan/kreatif", "Menjadi inovator produk"],
+                sharpen: ["Kemampuan visualisasi", "Berpikir strategis", "Komunikasi yang inspiratif (storytelling)"],
+                avoid: ["Sering bosan dengan detail atau pekerjaan rutin", "Idenya terlalu tinggi sampai sulit diwujudkan", "Lupa pada langkah-langkah praktis di lapangan"]
+            },
+            perasa: {
+                title: "Si Perasa (Tipe Penghubung)",
+                description: "Otakmu sangat peka terhadap emosi dan hubungan antar manusia. Kamu jago berkomunikasi, memahami orang lain, dan membangun keharmonisan. Kamu adalah 'lem' perekat dalam sebuah tim.",
+                careers: ["Guru/Dosen", "Psikolog/Konselor", "Humas (Public Relations)", "Pekerja Sosial", "Manajer HRD"],
+                entrepreneur: ["Membuka lembaga training/pelatihan", "Konsultan hubungan personal", "Membangun bisnis berbasis komunitas"],
+                sharpen: ["Empati dan mendengarkan aktif", "Kecerdasan emosional", "Membangun jaringan (networking)"],
+                avoid: ["Mudah baper atau terbawa perasaan", "Sulit membuat keputusan yang tidak populer (tidak enakan)", "Mengorbankan target demi menjaga hubungan baik"]
+            },
+            serbabisa: {
+                title: "Si Serba Bisa (Tipe Penolong)",
+                description: "Otakmu bekerja secara spontan dan responsif. Kamu punya insting yang tajam dan bakat di banyak bidang. Kamu adalah orang yang paling cepat tanggap dan siap membantu tanpa banyak tanya.",
+                careers: ["Paramedis/Tim SAR", "Customer Service", "Generalis (bisa di banyak posisi)", "Mediator"],
+                entrepreneur: ["Bisnis jasa yang butuh respons cepat (misal: jasa antar)", "Event Organizer (EO) dadakan", "Menjadi 'pemadam kebakaran' di berbagai proyek"],
+                sharpen: ["Kemampuan beradaptasi", "Kecepatan merespons", "Menjadi pendengar yang baik"],
+                avoid: ["Kurang fokus pada satu bidang jangka panjang", "Cenderung reaktif, bukan proaktif (menunggu masalah datang)", "Sulit merencanakan sesuatu secara detail"]
+            }
+        };
+
+        // --- STATE ---
+        let currentQuestionIndex = 0;
+        let scores = { praktis: 0, logis: 0, kreatif: 0, perasa: 0, serbabisa: 0 };
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const resultContainer = document.getElementById('result-content');
+        const progressBar = document.getElementById('progress-bar');
+
+        // --- FUNCTIONS ---
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            answersContainer.innerHTML = '';
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerHTML = answer.text;
+                button.className = 'btn text-left p-4 border-2 border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full';
+                button.onclick = () => selectAnswer(answer.type);
+                answersContainer.appendChild(button);
+            });
+            
+            updateProgressBar();
+        }
+
+        function selectAnswer(type) {
+            scores[type]++;
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function updateProgressBar() {
+            const progress = (currentQuestionIndex / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            
+            resultContainer.innerHTML = '';
+
+            const topTalentKey = sortedScores[0][0];
+            const profile = profiles[topTalentKey];
+
+            const resultHTML = `
+                <div class="border border-gray-200 p-6 rounded-lg bg-purple-50">
+                    <h3 class="text-2xl font-bold text-purple-700 mb-2">${profile.title}</h3>
+                    <p class="text-gray-700 mb-4">${profile.description}</p>
+                    
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-gray-800">Saran Karir yang Cocok:</h4>
+                        <p class="text-gray-600">${profile.careers.join(', ')}.</p>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-gray-800">Ide Usaha yang Sesuai:</h4>
+                        <p class="text-gray-600">${profile.entrepreneur.join(', ')}.</p>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-green-600">Skill yang Perlu Diasah:</h4>
+                        <p class="text-gray-600">${profile.sharpen.join(', ')}.</p>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-red-600">Sisi yang Perlu Diwaspadai:</h4>
+                        <p class="text-gray-600">${profile.avoid.join(', ')}.</p>
+                    </div>
+                </div>
+            `;
+            resultContainer.innerHTML = resultHTML;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            scores = { praktis: 0, logis: 0, kreatif: 0, perasa: 0, serbabisa: 0 };
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            updateProgressBar();
+        }
+    </script>
+</body>
+</html>
