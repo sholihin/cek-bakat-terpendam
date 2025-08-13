@@ -32,36 +32,12 @@
             background-color: #f5f3ff;
         }
         /* Styles for the report content */
-        .report-section h3 {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 700; /* font-bold */
-            color: #1f2937; /* text-gray-800 */
-            margin-bottom: 0.5rem; /* mb-2 */
-        }
-        .report-section h4 {
-            font-size: 1.1rem; /* text-lg */
-            font-weight: 600; /* font-semibold */
-            color: #4b5563; /* text-gray-600 */
-            margin-top: 1rem; /* mt-4 */
-        }
-        .report-section p, .report-section li {
-            color: #4b5563; /* text-gray-600 */
-        }
-        .report-section ul {
-            list-style-type: disc;
-            padding-left: 1.5rem; /* pl-6 */
-            margin-top: 0.5rem; /* mt-2 */
-        }
-        .tab-btn {
-            padding: 0.75rem 1rem;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            border-color: #6d28d9;
-            color: #6d28d9;
-            font-weight: 600;
-        }
+        .report-section h3 { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
+        .report-section h4 { font-size: 1.1rem; font-weight: 600; color: #4b5563; margin-top: 1rem; }
+        .report-section p, .report-section li { color: #4b5563; }
+        .report-section ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem; }
+        .tab-btn { padding: 0.75rem 1rem; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .tab-btn.active { border-color: #6d28d9; color: #6d28d9; font-weight: 600; }
     </style>
 </head>
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
@@ -72,9 +48,34 @@
         <div id="start-screen" class="card p-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Analisis Potensi Diri</h1>
             <p class="text-gray-600 mb-6">Tes ini dirancang untuk memberikan hasil yang lebih akurat dengan pertanyaan berbasis skenario. Jawablah sesuai reaksi pertamamu, bukan jawaban yang menurutmu 'ideal'. Kejujuran adalah kunci.</p>
-            <button onclick="startQuiz()" class="w-full bg-purple-700 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-purple-800 transition-colors">
+            <button onclick="showUserForm()" class="w-full bg-purple-700 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-purple-800 transition-colors">
                 Mulai Analisis Mendalam
             </button>
+        </div>
+
+        <!-- User Form Screen -->
+        <div id="user-form-screen" class="card p-8 hidden">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Langkah Terakhir Sebelum Memulai</h2>
+            <p class="text-center text-gray-600 mb-6">Isi data Anda untuk melanjutkan ke tes. Laporan hasil analisis akan dikirimkan juga ke email Anda.</p>
+            <form id="user-form" onsubmit="startQuiz(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" id="userName" name="userName" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="userEmail" class="block text-sm font-medium text-gray-700">Alamat Email</label>
+                        <input type="email" id="userEmail" name="userEmail" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="userPhone" class="block text-sm font-medium text-gray-700">Nomor HP (WhatsApp)</label>
+                        <input type="tel" id="userPhone" name="userPhone" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-purple-700 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-purple-800 transition-colors">
+                    Lanjutkan ke Tes
+                </button>
+            </form>
         </div>
 
         <!-- Quiz Screen -->
@@ -84,9 +85,7 @@
             </div>
             <p id="question-counter" class="text-center text-sm text-gray-500 mb-4"></p>
             <h2 id="question-text" class="text-xl font-semibold text-gray-800 mb-6 text-center"></h2>
-            <div id="answers-container" class="space-y-4">
-                <!-- Answers will be injected here by JS -->
-            </div>
+            <div id="answers-container" class="space-y-4"></div>
             <div class="mt-6 pt-4 border-t border-gray-200">
                 <button id="back-btn" onclick="goBack()" class="w-full bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
                     Kembali
@@ -101,24 +100,16 @@
                     <h1 class="text-3xl font-bold mb-2">Dasbor Potensi Komprehensif</h1>
                     <h2 id="dominant-title" class="text-2xl font-bold text-purple-700 mb-8"></h2>
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-center mb-8">
                     <div id="summary-text" class="md:col-span-3"></div>
-                    <div class="md:col-span-2">
-                         <canvas id="resultChart"></canvas>
-                    </div>
+                    <div class="md:col-span-2"><canvas id="resultChart"></canvas></div>
                 </div>
-
                 <div class="border-b border-gray-300">
-                    <nav id="tabs-container" class="flex -mb-px" aria-label="Tabs">
-                        <!-- Tabs will be generated here -->
-                    </nav>
+                    <nav id="tabs-container" class="flex -mb-px" aria-label="Tabs"></nav>
                 </div>
-                <div id="tab-content" class="mt-6">
-                    <!-- Tab content will be generated here -->
-                </div>
+                <div id="tab-content" class="mt-6"></div>
             </div>
-
+            
             <div class="mt-8 pt-6 border-t-2 border-dashed">
                 <h3 class="text-xl font-bold text-center text-gray-800 mb-4">Simpan Laporan Anda</h3>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -126,14 +117,12 @@
                     <button onclick="downloadDOCX()" class="flex-1 bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">Download DOCX</button>
                 </div>
             </div>
-            <div class="text-center mt-8">
-                <button onclick="restartQuiz()" class="text-gray-500 hover:text-gray-700 font-semibold">Ulangi Analisis</button>
-            </div>
+            <div class="text-center mt-8"><button onclick="restartQuiz()" class="text-gray-500 hover:text-gray-700 font-semibold">Ulangi Analisis</button></div>
         </div>
     </div>
 
     <script>
-        // --- DATA & PROFILES ---
+        // --- DATA & PROFILES (DIPERSINGKAT UNTUK KETERBACAAN) ---
         const questions = [
             { q: "Saat dihadapkan pada tugas baru yang rumit, apa yang Anda lakukan pertama kali?", a: [ { text: "Mencari tahu 'mengapa' tugas ini penting dan apa tujuan besarnya.", type: "kreatif" }, { text: "Memecahnya menjadi langkah-langkah kecil yang bisa langsung dikerjakan.", type: "logis" } ]},
             { q: "Seorang teman curhat tentang masalah pribadinya. Reaksi alami Anda adalah...", a: [ { text: "Mencoba merasakan apa yang ia rasakan dan memberikan dukungan emosional.", type: "perasa" }, { text: "Langsung menawarkan beberapa solusi praktis yang bisa ia coba.", type: "serbabisa" } ]},
@@ -152,36 +141,11 @@
             { q: "Anda paling tidak suka jika...", a: [ { text: "Diberi tugas tanpa instruksi yang jelas.", type: "praktis" }, { text: "Diberi tugas yang terlalu banyak aturan dan batasan.", type: "kreatif" } ]}
         ];
         const profiles = {
-            praktis: { title: "Si Praktis (Tipe Pelaksana)", color: "#ef4444", emoji: "🛠️", report: {
-                wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah tipe pendiri yang berpegang pada kenyataan. Anda membangun bisnis bata demi bata dengan kesabaran dan ketekunan.", kunci: ["Eksekusi yang Andal", "Manajemen Inventaris & Logistik", "Konsistensi Kualitas"], tantangan: ["**Kaku Terhadap Perubahan:** Terlalu terikat pada cara lama. Solusi: Jadwalkan waktu khusus untuk mencoba teknologi baru.", "**Kurang Inovatif:** Cenderung fokus pada 'bagaimana', bukan 'mengapa'. Solusi: Bekerja sama dengan partner yang Kreatif."] },
-                profesional: { title: "Jalur Profesional", peran: "Anda adalah tulang punggung perusahaan. Anda bisa diandalkan, teliti, dan mampu menjalankan tugas sesuai prosedur dengan sangat baik.", kunci: ["Menjadi spesialis di satu bidang", "Manajemen proyek yang rapi", "Kepatuhan terhadap standar"], tantangan: ["**Terlihat Kurang Menonjol:** Pekerjaan Anda yang rapi seringkali tidak terlihat. Solusi: Belajar mempresentasikan hasil kerja Anda secara kuantitatif.", "**Sulit Beradaptasi dengan Perubahan Arah Perusahaan:** Solusi: Lihat perubahan sebagai kesempatan belajar prosedur baru."] },
-                pendidik: { title: "Jalur Pendidik", peran: "Anda adalah tipe instruktur atau pelatih vokasi. Anda hebat dalam mengajarkan keterampilan praktis yang membutuhkan ketelitian dan pengulangan.", kunci: ["Mengajar berbasis praktik (prakarya, lab)", "Sabar dalam membimbing langkah demi langkah", "Membuat modul pelatihan yang jelas"], tantangan: ["**Kurang Fleksibel dengan Gaya Belajar Siswa:** Cenderung menggunakan satu cara yang terbukti berhasil. Solusi: Pelajari berbagai metode mengajar untuk menjangkau lebih banyak tipe siswa.", "**Bosan dengan Teori:** Solusi: Fokus pada pengajaran yang langsung bisa dipraktikkan."] },
-                kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'how-to' atau DIY (Do It Yourself). Anda membangun audiens yang percaya pada keahlian praktis Anda.", kunci: ["Konten tutorial yang detail", "Review produk berbasis pemakaian jangka panjang", "Membangun komunitas berbasis hobi/keterampilan"], tantangan: ["**Konten Terasa Monoton:** Sulit mencari ide baru di luar keahlian Anda. Solusi: Kolaborasi dengan kreator lain untuk mendapatkan perspektif baru.", "**Kurang dalam Storytelling:** Solusi: Belajar membingkai tutorial Anda dalam sebuah cerita atau masalah yang relate dengan audiens."] }
-            }},
-            logis: { title: "Si Logis (Tipe Analis)", color: "#3b82f6", emoji: "🏛️", report: {
-                wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Arsitek Bisnis. Anda membangun perusahaan di atas fondasi sistem yang kokoh dan data yang valid.", kunci: ["Membangun Sistem dari Nol", "Inovasi Berbasis Data", "Problem Solving Kompleks"], tantangan: ["**Analysis Paralysis:** Terlalu lama menganalisis. Solusi: Terapkan prinsip MVP (Minimum Viable Product).", "**Mengabaikan Aspek Manusia:** Solusi: Rekrut partner atau manajer kunci yang memiliki potensi dominan 'Perasa'."] },
-                profesional: { title: "Jalur Profesional", peran: "Anda adalah pemecah masalah dan ahli strategi di perusahaan. Anda mampu melihat inefisiensi dan merancang solusi yang lebih baik.", kunci: ["Analisis Data & Business Intelligence", "Manajemen Proyek Kompleks", "Pengembangan Sistem & Proses"], tantangan: ["**Dianggap Kaku atau Robotik:** Sulit membangun hubungan informal. Solusi: Alokasikan waktu untuk 'small talk' dan memahami kolega secara personal.", "**Frustrasi dengan Birokrasi:** Tidak sabar dengan proses yang tidak logis. Solusi: Belajar 'bermain politik kantor' untuk meloloskan ide Anda."] },
-                pendidik: { title: "Jalur Pendidik", peran: "Anda adalah dosen atau pembuat kurikulum yang brilian. Anda mampu menyusun materi pelajaran yang rumit menjadi silabus yang terstruktur dan mudah diikuti.", kunci: ["Mengajar bidang eksak (STEM)", "Mengembangkan metode pengajaran berbasis logika", "Riset akademis"], tantangan: ["**Terlalu Teoritis:** Penjelasan Anda bisa jadi sulit dipahami orang awam. Solusi: Gunakan lebih banyak analogi dan contoh nyata.", "**Kurang Sabar dengan Pertanyaan 'Bodoh':** Solusi: Latih empati dan ingat bahwa setiap orang memulai dari nol."] },
-                kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'explainer' atau edukasi mendalam. Anda membedah topik kompleks menjadi konten yang logis dan mudah dicerna.", kunci: ["Konten analisis (film, bisnis, teknologi)", "Membuat infografis berbasis data", "Menulis buku non-fiksi yang terstruktur"], tantangan: ["**Konten Terasa 'Kering':** Sulit menarik audiens yang mencari hiburan. Solusi: Belajar teknik storytelling untuk membungkus data Anda.", "**Perfeksionis:** Terlalu lama riset hingga jarang posting. Solusi: Terapkan aturan 80/20. Cukup baik lebih baik daripada tidak sama sekali."] }
-            }},
-            kreatif: { title: "Si Kreatif (Tipe Visioner)", color: "#10b981", emoji: "�", report: {
-                wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Visioner. Anda melihat masa depan dan tren sebelum orang lain menyadarinya. Anda membangun bisnis dari sebuah ide besar.", kunci: ["Menemukan Peluang di 'Blue Ocean'", "Branding & Storytelling yang Kuat", "Pivot & Adaptasi Cepat"], tantangan: ["**Bosan dengan Detail:** Mudah kehilangan minat pada operasional. Solusi: Segera rekrut orang tipe 'Praktis' atau 'Logis' sebagai manajer.", "**Ide yang Tidak Realistis:** Solusi: Paksa diri Anda untuk membuat rencana 90 hari yang sangat detail."] },
-                profesional: { title: "Jalur Profesional", peran: "Anda adalah sumber inovasi di perusahaan. Anda cocok di departemen R&D, strategi, atau marketing yang membutuhkan ide-ide segar.", kunci: ["Pengembangan Produk Baru", "Strategi Pemasaran Kreatif", "Problem Solving dengan Cara Baru"], tantangan: ["**Dianggap 'Tukang Mimpi':** Ide Anda mungkin dianggap tidak praktis oleh atasan. Solusi: Belajar menyajikan ide Anda dengan data pendukung dan proyeksi keuntungan.", "**Tidak Suka Aturan:** Sulit bekerja di perusahaan yang birokratis. Solusi: Cari perusahaan dengan kultur yang lebih fleksibel dan inovatif."] },
-                pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru yang inspiratif. Anda tidak hanya mengajar materi, tetapi juga cara berpikir. Anda cocok mengajar seni, desain, atau kewirausahaan.", kunci: ["Mengajar dengan metode berbasis proyek", "Mendorong pemikiran kritis siswa", "Menjadi mentor yang membuka wawasan"], tantangan: ["**Bosan dengan Kurikulum Baku:** Merasa terkekang oleh aturan sekolah. Solusi: Cari cara kreatif untuk menyampaikan materi wajib.", "**Sulit Menilai Secara Objektif:** Cenderung menilai berdasarkan usaha dan kreativitas. Solusi: Buat rubrik penilaian yang jelas sebelum proyek dimulai."] },
-                kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah seorang 'thought leader' atau influencer. Anda membangun audiens dengan membagikan visi, ide, dan perspektif unik Anda tentang dunia.", kunci: ["Membangun personal brand yang kuat", "Membuat konten yang memprovokasi pemikiran", "Storytelling lintas platform"], tantangan: ["**Inkonsisten:** Mood sangat mempengaruhi produktivitas. Solusi: Buat sistem 'batching content', rekam banyak konten saat mood sedang bagus.", "**Burnout:** Terlalu banyak ide bisa membuat lelah. Solusi: Belajar fokus pada 1-2 seri konten utama pada satu waktu."] }
-            }},
-            perasa: { title: "Si Perasa (Tipe Penghubung)", color: "#f97316", emoji: "❤️", report: {
-                wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Pembangun Komunitas. Anda membangun bisnis di atas fondasi hubungan dan kepercayaan.", kunci: ["Membangun Komunitas Pelanggan yang Loyal", "Layanan Pelanggan yang Luar Biasa", "Menciptakan Kultur Perusahaan yang Positif"], tantangan: ["**Sulit Mengambil Keputusan Tegas:** Tidak enakan. Solusi: Buat kriteria objektif sebagai dasar keputusan sulit.", "**Mengabaikan Profitabilitas:** Terlalu fokus membahagiakan semua orang. Solusi: Tunjuk seseorang untuk bertanggung jawab atas keuangan."] },
-                profesional: { title: "Jalur Profesional", peran: "Anda adalah 'lem' perekat tim. Anda unggul dalam peran yang membutuhkan kecerdasan emosional seperti HR, Account Manager, atau Team Leader.", kunci: ["Manajemen Hubungan Klien", "Pengembangan Tim & Resolusi Konflik", "Negosiasi & Diplomasi"], tantangan: ["**Terlalu Terbawa Perasaan:** Sulit memisahkan urusan personal dan profesional. Solusi: Latih teknik mindfulness untuk menjaga jarak emosional.", "**Dicurhati Terus-menerus:** Bisa menguras energi. Solusi: Tetapkan batasan yang jelas kapan Anda bisa dan tidak bisa diganggu."] },
-                pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru atau konselor yang disukai siswa. Anda mampu membangun hubungan personal dan membuat siswa merasa aman dan dihargai.", kunci: ["Menjadi wali kelas atau konselor sekolah", "Mengajar ilmu sosial atau humaniora", "Menciptakan lingkungan belajar yang positif"], tantangan: ["**Sulit Memberi Nilai Jelek:** Merasa tidak tega. Solusi: Fokus pada memberikan feedback konstruktif, bukan hanya angka.", "**Energi Terkuras oleh Emosi Siswa:** Solusi: Jadwalkan 'me time' yang cukup untuk mengisi ulang energi emosional Anda."] },
-                kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah influencer yang membangun hubungan erat dengan audiens. Anda berbagi kehidupan, perasaan, dan cerita yang relate dengan banyak orang.", kunci: ["Membangun komunitas yang solid (misal: grup Telegram/Discord)", "Konten 'a day in my life' atau cerita personal", "Kolaborasi dengan kreator lain"], tantangan: ["**Haters & Kritik Pedas:** Sangat mudah terpengaruh oleh komentar negatif. Solusi: Bangun 'kulit badak' dan fokus pada komentar dari komunitas inti Anda.", "**Over-sharing:** Batasan antara privasi dan konten menjadi kabur. Solusi: Tentukan dengan sadar mana bagian hidup yang tidak akan Anda bagikan."] }
-            }},
-            serbabisa: { title: "Si Serba Bisa (Tipe Penolong)", color: "#8b5cf6", emoji: "⚡", report: {
-                wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Pemadam Kebakaran. Anda unggul dalam bisnis yang dinamis dan membutuhkan respons cepat. Anda mampu menangani banyak hal sekaligus.", kunci: ["Adaptasi Cepat Terhadap Pasar", "Multitasking & Manajemen Krisis", "Menemukan 'Jalan Pintas' yang Efektif"], tantangan: ["**Kurang Fokus Jangka Panjang:** Cenderung melompat-lompat. Solusi: Paksa diri untuk membuat rencana tahunan dan patuhi itu.", "**Reaktif, Bukan Proaktif:** Menunggu masalah muncul. Solusi: Alokasikan waktu untuk berpikir strategis."] },
-                profesional: { title: "Jalur Profesional", peran: "Anda adalah seorang generalis yang berharga. Anda bisa ditempatkan di banyak posisi dan cepat belajar. Sangat cocok di startup atau peran 'Chief of Staff'.", kunci: ["Manajemen Proyek yang Fleksibel (Agile)", "Sales & Business Development", "Customer Support tingkat lanjut"], tantangan: ["**Sulit Mendapatkan Promosi Spesialis:** Dianggap 'tidak punya keahlian khusus'. Solusi: Pilih satu skill 'jangkar' untuk didalami, sementara yang lain menjadi pendukung.", "**Merasa Bosan dengan Rutinitas:** Solusi: Cari perusahaan yang menawarkan rotasi jabatan atau proyek-proyek baru secara berkala."] },
-                pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru pengganti atau guru ekstrakurikuler favorit. Anda bisa mengajar berbagai macam topik dengan cara yang menyenangkan dan praktis.", kunci: ["Menjadi pelatih di berbagai bidang (public speaking, olahraga)", "Mengajar dengan metode 'learning by doing'", "Mengelola acara atau kegiatan sekolah"], tantangan: ["**Kurang Mendalam dalam Satu Topik:** Pengetahuan Anda luas tapi tidak dalam. Solusi: Kolaborasi dengan guru spesialis untuk materi yang rumit.", "**Persiapan Mengajar yang Kurang Terstruktur:** Cenderung spontan. Solusi: Buat kerangka materi ajar sederhana sebelum masuk kelas."] },
-                kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'Jack of all trades'. Anda bisa mereview produk, membuat vlog perjalanan, lalu membahas isu trending dalam satu minggu.", kunci: ["Konten yang variatif dan tidak membosankan", "Cepat mengikuti tren yang sedang viral", "Membangun personal brand sebagai 'teman yang seru'"], tantangan: ["**Audiens Bingung dengan Niche Anda:** Sulit mendefinisikan kanal Anda. Solusi: Buat 'pilar konten' yang jelas (misal: 3 topik utama) sebagai benang merah.", "**Kualitas Konten Naik-Turun:** Karena mencoba banyak hal. Solusi: Tetapkan standar kualitas minimum untuk semua jenis konten yang Anda buat."] }
-            }}
+            praktis: { title: "Si Praktis (Tipe Pelaksana)", color: "#ef4444", emoji: "🛠️", report: { wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah tipe pendiri yang berpegang pada kenyataan...", kunci: ["Eksekusi yang Andal", "Manajemen Inventaris", "Konsistensi Kualitas"], tantangan: ["Kaku Terhadap Perubahan", "Kurang Inovatif"] }, profesional: { title: "Jalur Profesional", peran: "Anda adalah tulang punggung perusahaan...", kunci: ["Spesialis di satu bidang", "Manajemen proyek rapi", "Kepatuhan standar"], tantangan: ["Terlihat Kurang Menonjol", "Sulit Beradaptasi"] }, pendidik: { title: "Jalur Pendidik", peran: "Anda adalah tipe instruktur atau pelatih vokasi...", kunci: ["Mengajar berbasis praktik", "Sabar membimbing", "Modul pelatihan jelas"], tantangan: ["Kurang Fleksibel", "Bosan dengan Teori"] }, kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'how-to' atau DIY...", kunci: ["Konten tutorial detail", "Review produk jangka panjang", "Membangun komunitas hobi"], tantangan: ["Konten Monoton", "Kurang dalam Storytelling"] } } },
+            logis: { title: "Si Logis (Tipe Analis)", color: "#3b82f6", emoji: "🏛️", report: { wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Arsitek Bisnis...", kunci: ["Membangun Sistem dari Nol", "Inovasi Berbasis Data", "Problem Solving Kompleks"], tantangan: ["Analysis Paralysis", "Mengabaikan Aspek Manusia"] }, profesional: { title: "Jalur Profesional", peran: "Anda adalah pemecah masalah dan ahli strategi...", kunci: ["Analisis Data", "Manajemen Proyek Kompleks", "Pengembangan Sistem"], tantangan: ["Dianggap Kaku", "Frustrasi dengan Birokrasi"] }, pendidik: { title: "Jalur Pendidik", peran: "Anda adalah dosen atau pembuat kurikulum brilian...", kunci: ["Mengajar bidang eksak (STEM)", "Metode pengajaran berbasis logika", "Riset akademis"], tantangan: ["Terlalu Teoritis", "Kurang Sabar"] }, kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'explainer'...", kunci: ["Konten analisis", "Infografis berbasis data", "Menulis buku non-fiksi"], tantangan: ["Konten Terasa 'Kering'", "Perfeksionis"] } } },
+            kreatif: { title: "Si Kreatif (Tipe Visioner)", color: "#10b981", emoji: "💡", report: { wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Visioner...", kunci: ["Menemukan Peluang di 'Blue Ocean'", "Branding & Storytelling", "Pivot & Adaptasi Cepat"], tantangan: ["Bosan dengan Detail", "Ide yang Tidak Realistis"] }, profesional: { title: "Jalur Profesional", peran: "Anda adalah sumber inovasi di perusahaan...", kunci: ["Pengembangan Produk Baru", "Strategi Pemasaran Kreatif", "Problem Solving dengan Cara Baru"], tantangan: ["Dianggap 'Tukang Mimpi'", "Tidak Suka Aturan"] }, pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru yang inspiratif...", kunci: ["Mengajar berbasis proyek", "Mendorong pemikiran kritis", "Menjadi mentor"], tantangan: ["Bosan dengan Kurikulum Baku", "Sulit Menilai Secara Objektif"] }, kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah seorang 'thought leader' atau influencer...", kunci: ["Membangun personal brand kuat", "Konten yang memprovokasi pemikiran", "Storytelling lintas platform"], tantangan: ["Inkonsisten", "Burnout"] } } },
+            perasa: { title: "Si Perasa (Tipe Penghubung)", color: "#f97316", emoji: "❤️", report: { wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Pembangun Komunitas...", kunci: ["Membangun Komunitas Loyal", "Layanan Pelanggan Luar Biasa", "Kultur Perusahaan Positif"], tantangan: ["Sulit Mengambil Keputusan Tegas", "Mengabaikan Profitabilitas"] }, profesional: { title: "Jalur Profesional", peran: "Anda adalah 'lem' perekat tim...", kunci: ["Manajemen Hubungan Klien", "Pengembangan Tim & Resolusi Konflik", "Negosiasi & Diplomasi"], tantangan: ["Terlalu Terbawa Perasaan", "Dicurhati Terus-menerus"] }, pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru atau konselor yang disukai...", kunci: ["Menjadi wali kelas/konselor", "Mengajar ilmu sosial", "Lingkungan belajar positif"], tantangan: ["Sulit Memberi Nilai Jelek", "Energi Terkuras oleh Emosi Siswa"] }, kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah influencer yang membangun hubungan erat...", kunci: ["Membangun komunitas solid", "Konten cerita personal", "Kolaborasi"], tantangan: ["Haters & Kritik Pedas", "Over-sharing"] } } },
+            serbabisa: { title: "Si Serba Bisa (Tipe Penolong)", color: "#8b5cf6", emoji: "⚡", report: { wirausaha: { title: "Jalur Wirausaha", peran: "Anda adalah Sang Pemadam Kebakaran...", kunci: ["Adaptasi Cepat", "Multitasking & Manajemen Krisis", "Menemukan 'Jalan Pintas'"], tantangan: ["Kurang Fokus Jangka Panjang", "Reaktif, Bukan Proaktif"] }, profesional: { title: "Jalur Profesional", peran: "Anda adalah seorang generalis yang berharga...", kunci: ["Manajemen Proyek Fleksibel (Agile)", "Sales & Business Development", "Customer Support"], tantangan: ["Sulit Mendapatkan Promosi Spesialis", "Merasa Bosan dengan Rutinitas"] }, pendidik: { title: "Jalur Pendidik", peran: "Anda adalah guru pengganti atau guru ekstrakurikuler favorit...", kunci: ["Menjadi pelatih di berbagai bidang", "Mengajar 'learning by doing'", "Mengelola acara sekolah"], tantangan: ["Kurang Mendalam dalam Satu Topik", "Persiapan Kurang Terstruktur"] }, kreator: { title: "Jalur Kreator & Sosial", peran: "Anda adalah kreator konten 'Jack of all trades'...", kunci: ["Konten yang variatif", "Cepat mengikuti tren viral", "Personal brand 'teman yang seru'"], tantangan: ["Audiens Bingung dengan Niche", "Kualitas Konten Naik-Turun"] } } }
         };
 
         // --- STATE MANAGEMENT ---
@@ -189,10 +153,25 @@
         let scores = { praktis: 0, logis: 0, kreatif: 0, perasa: 0, serbabisa: 0 };
         let answerHistory = [];
         let myChart;
+        let userProfile = {};
+        let userData = {};
+
+        // --- GOOGLE SCRIPT URL ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCsVkQm0FuK8l52Fg0qFf1MlVd1bgwPHwBhlGMcsUua4sgVsW4W47sHnoGCQO0Flw-Yw/exec";
 
         // --- CORE FUNCTIONS ---
-        function startQuiz() {
+        function showUserForm() {
             document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('user-form-screen').classList.remove('hidden');
+        }
+
+        function startQuiz(event) {
+            event.preventDefault();
+            userData.name = document.getElementById('userName').value;
+            userData.email = document.getElementById('userEmail').value;
+            userData.phone = document.getElementById('userPhone').value;
+
+            document.getElementById('user-form-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             answerHistory = [];
             displayQuestion();
@@ -250,7 +229,11 @@
             const dominantType = sortedScores[0][0];
             const secondaryType = sortedScores[1][0];
             
+            userProfile.dominant = profiles[dominantType];
+            userProfile.secondary = profiles[secondaryType];
+
             renderReport(dominantType, secondaryType, sortedScores);
+            sendDataToGoogleSheet(dominantType, secondaryType);
         }
 
         function renderReport(dominantType, secondaryType, sortedScores) {
@@ -268,15 +251,12 @@
             const reportPaths = dominantProfile.report;
             Object.keys(reportPaths).forEach((key, index) => {
                 const pathData = reportPaths[key];
-                
-                // Create Tab Button
                 const tabButton = document.createElement('button');
                 tabButton.className = `tab-btn ${index === 0 ? 'active' : ''}`;
                 tabButton.textContent = pathData.title;
                 tabButton.onclick = () => switchTab(key);
                 tabsContainer.appendChild(tabButton);
 
-                // Create Tab Content
                 const tabContent = document.createElement('div');
                 tabContent.id = `content-${key}`;
                 tabContent.className = `report-section ${index > 0 ? 'hidden' : ''}`;
@@ -295,11 +275,8 @@
         }
 
         function switchTab(key) {
-            // Update button styles
             document.querySelectorAll('#tabs-container .tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-
-            // Update content visibility
             document.querySelectorAll('#tab-content .report-section').forEach(content => content.classList.add('hidden'));
             document.getElementById(`content-${key}`).classList.remove('hidden');
         }
@@ -314,36 +291,52 @@
 
             myChart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{ label: 'Skor Potensi', data: data, backgroundColor: backgroundColors }]
-                },
+                data: { labels: labels, datasets: [{ label: 'Skor Potensi', data: data, backgroundColor: backgroundColors }] },
                 options: { indexAxis: 'y', scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
             });
         }
         
+        function sendDataToGoogleSheet(dominantType, secondaryType) {
+            if (SCRIPT_URL === "MASUKKAN_URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI") {
+                console.log("Google Apps Script URL not configured. Skipping data submission.");
+                return;
+            }
+
+            const data = {
+                timestamp: new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
+                name: userData.name,
+                email: userData.email,
+                phone: userData.phone,
+                dominant: profiles[dominantType].title,
+                secondary: profiles[secondaryType].title,
+                score_praktis: scores.praktis,
+                score_logis: scores.logis,
+                score_kreatif: scores.kreatif,
+                score_perasa: scores.perasa,
+                score_serbabisa: scores.serbabisa
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => console.log("Data sent to Google Sheet successfully."))
+            .catch(error => console.error('Error sending data to Google Sheet:', error));
+        }
+
         function downloadPDF() {
             const element = document.getElementById('report-content-for-download');
-            // Temporarily show all content for PDF capture
             const hiddenContents = element.querySelectorAll('.hidden');
             hiddenContents.forEach(el => el.classList.remove('hidden'));
-
-            const opt = {
-                margin:       [0.5, 0.5, 0.5, 0.5],
-                filename:     'Laporan_Potensi_Diri_Lengkap.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
+            const opt = { margin: [0.5, 0.5, 0.5, 0.5], filename: 'Laporan_Potensi_Diri_Lengkap.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
             html2pdf().set(opt).from(element).save().then(() => {
-                // Hide the content again after capture
                 hiddenContents.forEach(el => el.classList.add('hidden'));
-                // Make sure the active tab is visible again
                 const activeTab = document.querySelector('.tab-btn.active');
                 if (activeTab) {
-                    const activeKey = activeTab.textContent.toLowerCase().split(' ')[1]; // Heuristic to find key
-                    const keyMap = { 'wirausaha': 'wirausaha', 'profesional': 'profesional', 'pendidik': 'pendidik', 'kreator': 'kreator' };
-                    const finalKey = Object.keys(keyMap).find(k => activeTab.textContent.toLowerCase().includes(k));
+                    const finalKey = Object.keys(profiles.praktis.report).find(k => activeTab.textContent.toLowerCase().includes(k));
                     if(finalKey) document.getElementById(`content-${finalKey}`).classList.remove('hidden');
                 }
             });
@@ -351,20 +344,15 @@
 
         async function downloadDOCX() {
             const element = document.getElementById('report-content-for-download');
-            // Temporarily show all content for DOCX capture
             const hiddenContents = element.querySelectorAll('.hidden');
             hiddenContents.forEach(el => el.classList.remove('hidden'));
-
             const fileBuffer = await htmlToDocx.asBlob(element.innerHTML);
-            
-            // Hide the content again after capture
             hiddenContents.forEach(el => el.classList.add('hidden'));
             const activeTab = document.querySelector('.tab-btn.active');
             if (activeTab) {
                 const finalKey = Object.keys(profiles.praktis.report).find(k => activeTab.textContent.toLowerCase().includes(k));
                 if(finalKey) document.getElementById(`content-${finalKey}`).classList.remove('hidden');
             }
-            
             const url = URL.createObjectURL(fileBuffer);
             const a = document.createElement('a');
             a.href = url;
@@ -386,4 +374,3 @@
     </script>
 </body>
 </html>
-�
